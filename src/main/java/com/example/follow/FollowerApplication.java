@@ -1,6 +1,6 @@
 package com.example.follow;
 
-import com.example.follow.dto.FollowerRepositoryDto;
+import com.example.follow.model.FollowerRepositoryDto;
 import com.example.follow.service.FollowerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,9 +25,14 @@ public class FollowerApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		String username = "syyjbhjh3";  // 예시 사용자 이름
-		List<FollowerRepositoryDto> repositories = followerService.getUserRepositories(username);
+		List<FollowerRepositoryDto> follower = followerService.getFollowerRepositories(username);
+		List<FollowerRepositoryDto> following = followerService.getFollowingRepositories(username);
 
-		repositories.forEach(repo -> {
+		following.forEach(repo -> {
+			System.out.println(repo.getLogin());
+		});
+
+		follower.forEach(repo -> {
 			System.out.println(repo.getLogin());
 		});
 	}

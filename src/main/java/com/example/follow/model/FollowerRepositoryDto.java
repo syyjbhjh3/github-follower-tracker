@@ -1,4 +1,4 @@
-package com.example.follow.dto;
+package com.example.follow.model;
 
 import lombok.Data;
 
