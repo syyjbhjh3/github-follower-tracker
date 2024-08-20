@@ -4,8 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum FollowerEnum {
-    FOLLOWER_URL("https://api.github.com/users/%s/followers"),
-    FOLLWING_URL("https://api.github.com/users/%s/following");
+    FOLLOWER_URL("https://api.github.com/users/%s/followers?per_page=100"),
+    FOLLWING_URL("https://api.github.com/users/%s/following?per_page=100"),
+    FOLLWING_USER_URL("https://api.github.com/user/following/%s");
 
     public final String url;
 
