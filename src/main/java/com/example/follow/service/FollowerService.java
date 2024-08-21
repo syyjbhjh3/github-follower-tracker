@@ -1,5 +1,6 @@
 package com.example.follow.service;
 
+import com.example.follow.model.FollowerApiResponse;
 import com.example.follow.model.FollowerEnum;
 import com.example.follow.model.FollowerRepositoryDto;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -13,7 +14,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class FollowerService {
@@ -29,8 +29,8 @@ public class FollowerService {
         this.objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
     }
 
-    public List<FollowerRepositoryDto> getFollowerRepositories(String username) throws Exception {
-        String uri = String.format(FollowerEnum.FOLLOWER_URL.getUrl(), username);
+    public List<FollowerRepositoryDto> getFollowerRepositories(String username, Integer page) throws Exception {
+        String uri = String.format(FollowerEnum.FOLLOWER_URL.getUrl(), username, page);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
                 .header("Accept", "application/vnd.github+json")
@@ -49,8 +49,8 @@ public class FollowerService {
         }
     }
 
-    public List<FollowerRepositoryDto> getFollowingRepositories(String username) throws Exception {
-        String uri = String.format(FollowerEnum.FOLLWING_URL.getUrl(), username);
+    public List<FollowerRepositoryDto> getFollowingRepositories(String username, Integer page) throws Exception {
+        String uri = String.format(FollowerEnum.FOLLWING_URL.getUrl(), username, page);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
                 .header("Accept", "application/vnd.github+json")
@@ -69,7 +69,7 @@ public class FollowerService {
         }
     }
 
-    public Map followingUser(String username) throws Exception {
+    public FollowerApiResponse<String> followingUser(String username) throws Exception {
         String uri = String.format(FollowerEnum.FOLLWING_USER_URL.getUrl(), username);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
@@ -81,15 +81,14 @@ public class FollowerService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() == 200) {
-            /* Common Messaging 처리 필요*/
-            return null;
+        if (response.statusCode() == 204) {
+            return new FollowerApiResponse<>(true, "Successfully unfollowed the user", response.statusCode(), null);
         } else {
-            throw new RuntimeException("Failed to  following User: " + response.statusCode());
+            return new FollowerApiResponse<>(false, "Failed to unfollow the user", response.statusCode(), null);
         }
     }
 
-    public Map unFollowingUser(String username) throws Exception {
+    public FollowerApiResponse<String> unFollowingUser(String username) throws Exception {
         String uri = String.format(FollowerEnum.FOLLWING_USER_URL.getUrl(), username);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
@@ -101,11 +100,10 @@ public class FollowerService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (response.statusCode() == 200) {
-            /* Common Messaging 처리 필요*/
-            return null;
+        if (response.statusCode() == 204) { // 204 : Success
+            return new FollowerApiResponse<>(true, "Successfully unfollowed the user", response.statusCode(), null);
         } else {
-            throw new RuntimeException("Failed to  following User: " + response.statusCode());
+            return new FollowerApiResponse<>(false, "Failed to unfollow the user", response.statusCode(), null);
         }
     }
 }
